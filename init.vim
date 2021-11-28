@@ -9,6 +9,7 @@
 
 set nocompatible
 
+
 "-------------------------------------------------------------------------------
 " Vundle set up
 "-------------------------------------------------------------------------------
@@ -42,6 +43,10 @@ let g:airline#extensions#tabline#enabled = 1
 "-------------------------------------------------------------------------------
 " Ignore common extensions
 let NERDTreeIgnore = ['\.o$', '\.pyc$']
+
+" Sometimes I'll commonly try to switch buffers while in NERDTree (which would replace
+" the NERDTree buffer). This is most *not* what I want to do, so ignore it.
+autocmd BufEnter * if bufname('#') =~# "^NERD_tree_" | b# | endif
 
 "-------------------------------------------------------------------------------
 " Syntastic settings
@@ -88,6 +93,10 @@ set list
 
 " Don't let vim insert new lines
 set textwidth=0
+
+" Make command tab completion a bit easier to use
+set wildmode=longest:full,full
+set wildmenu
 
 "-------------------------------------------------------------------------------
 " Colors and Interface settings
@@ -151,7 +160,7 @@ function! StripTrailingWhitespaces()
     %s/\s\+$//e
     call cursor(l, c)
 endfun
-command StripTrailingWhitespaces call StripTrailingWhitespaces()
+command! StripTrailingWhitespaces call StripTrailingWhitespaces()
 
 " Automatically clean up trailing whitespace in source code. Note that if you're dealing
 " with 'other people's code' you might make them angry when you commit a ton of changes
@@ -176,9 +185,13 @@ nnoremap <silent> J <C-w>j
 nnoremap <silent> L <C-w>l
 nnoremap <silent> K <C-w>k
 
-" Switch between Vim tabs with Ctrl-h and Ctrl-l
-nnoremap <C-h> :tabprevious<CR>
-nnoremap <C-l> :tabnext<CR>
+" Switch between Vim buffers with  with Ctrl-h and Ctrl-l
+nnoremap <C-h> :bprevious<CR>
+nnoremap <C-l> :bnext<CR>
+
+" Use page up and page down to switch tabs.
+nnoremap <PageUp> :tabnext<CR>
+nnoremap <PageDown> :tabprevious<CR>
 
 " A shortcut for cleaning up JSON files
 nnoremap <leader>j :%!python -m json.tool<CR>
