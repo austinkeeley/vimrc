@@ -1,214 +1,170 @@
-" Vim configuration for Austin Keeley (@austinkeeley)
-"
-" Installation instructions (nvim)
-" 1. Install Vundle
-"     git clone https://github.com/VundleVim/Vundle.vim.git ~/.config/nvim/bundle/Vundle.vim
-" 2. Copy this file to ~/.config/nvim/init.vim
-" 3. Start nvim
-" 4. Run :PluginInstall
+" init.vim
+" NeoVim configuration by Austin Keeley (@austinkeeley)
+" Note: Run the command :source % to reload this configuration while editing
+" it. You can also run :InitReload while editing any file to reload the
+" configuration.
 
+" Plugins are managed by vim-plug
+" Install using
+" sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+"    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+" Then call :PlugInstall to install the plugins
+
+call plug#begin()
+Plug 'flazz/vim-colorschemes'
+Plug 'ayu-theme/ayu-vim'
+Plug 'scrooloose/nerdtree'
+Plug 'airblade/vim-gitgutter'
+Plug 'neovim/nvim-lspconfig'
+Plug 'TaDaa/vimade'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+call plug#end()
+
+" -----------------------------------------------------------------------------
+" Settings
+" -----------------------------------------------------------------------------
+
+" Many of these settings are implicitly set by NeoVim, but are explictly set
+" here for Vim compatability.  See full list here: https://neovim.io/doc/user/vim_diff.html
+
+" Standard usability (default in NeoVim)
 set nocompatible
-
-
-"-------------------------------------------------------------------------------
-" Vundle set up
-"-------------------------------------------------------------------------------
-" Set the runtime path to include Vundle and initialize
-" For the regular Vim version, use:
-" set runtimepath+=~/.vim/bundle/Vundle.vim
-filetype off
-set runtimepath+=~/.config/nvim/bundle/Vundle.vim
-call vundle#begin()
-Plugin 'VundleVim/Vundle.vim'
-Plugin 'scrooloose/nerdtree'
-Plugin 'scrooloose/syntastic'
-Plugin 'flazz/vim-colorschemes'
-Plugin 'bling/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
-Plugin 'tpope/vim-fugitive'
-Plugin 'airblade/vim-gitgutter'
-call vundle#end()
-filetype plugin indent on
-
-"-------------------------------------------------------------------------------
-"  Airline settings
-"-------------------------------------------------------------------------------
-" Make sure airline appears. 2 means "always"
-set laststatus=2
-let g:airline_powerline_fonts = 1
-let g:airline#extensions#tabline#enabled = 1
-
-"-------------------------------------------------------------------------------
-" NERDTree settings
-"-------------------------------------------------------------------------------
-" Ignore common extensions
-let NERDTreeIgnore = ['\.o$', '\.pyc$']
-
-" Sometimes I'll commonly try to switch buffers while in NERDTree (which would replace
-" the NERDTree buffer). This is most *not* what I want to do, so ignore it.
-autocmd BufEnter * if bufname('#') =~# "^NERD_tree_" | b# | endif
-
-"-------------------------------------------------------------------------------
-" Syntastic settings
-"-------------------------------------------------------------------------------
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 0
-let g:syntastic_check_on_wq = 0
-"let g:syntastic_mode_map = {'mode':'passive'}
-
-"-------------------------------------------------------------------------------
-" Usability, spaces, etc.
-"-------------------------------------------------------------------------------
-" Set sane backspace behavior. Modern Vim and Neovim already have this.
 set backspace=indent,eol,start
+set autoindent
+set belloff=all
+set hlsearch
+set incsearch
+set syntax
 
-set incsearch            " Turn on incremental search
-set ignorecase smartcase " Ignore case when searching *unless* you search with a capital letter
-set nowrap
+" Let the OS handle the mouse
+set mouse=
 
+" Sometimes I am in the fish shell, which is not POSIX compliant
+set shell=/bin/bash
 
-" Turn off backups. Modern Vim and Neovim already have this.
-set nobackup
+" Turn on numbers
+set number
 
-" Team spaces
-set expandtab     " Use spaces
-set tabstop=4     " Tab key produces 4 spaces
-set shiftwidth=0  " When using code with indents, indent to the tabstop
+" Filetype awareness (default in NeoVim)
+filetype on
 
-" Go prefers tabs
-autocmd FileType go setlocal noexpandtab
-
-" Use 2 space indents for Ruby and JS
-autocmd FileType ruby set tabstop=2|set shiftwidth=2
-autocmd FileType javascript set tabstop=2|set shiftwidth=2
-
-" Show tabs and spaces
-set listchars=tab:>-,trail:·
-set list
-
-" Don't let vim insert new lines
-set textwidth=0
-
-" Make command tab completion a bit easier to use
-set wildmode=longest:full,full
-set wildmenu
-
-"-------------------------------------------------------------------------------
-" Colors and Interface settings
-"-------------------------------------------------------------------------------
-" Turn on syntax highlighting
-syntax on
-
-" This sometimes works to make colors better
-set termguicolors
-
-" Set my colors; here's a few that I like
-set background=dark
-" color inkpot
-" color solarized
-" color railscasts
-" color desertEX
-" color zenburn
-color molokai
-" color dracula
-" color slate
-" color matrix
-" color vibrantchalk
-" color wombat256
-" color zmrok
-" color dante
-" color freya
-
-" Personal preferences to let me know where the cursor is
-" set cursorline    " Note that this doesn't play nice with all color schemes.
-" Defaulting to off
-set number          " Show line numbers
-set ruler           " Show the ruler at the bottom, although airline takes care of this
-set colorcolumn=88  " Put a column 80 + 10 percent
-
-" Does anyone actually use this?
-set novisualbell
-
-" Change the terminal title to be the title of whatever I'm editing
+" Change the terminal title to the filename
 set title
 
-"-------------------------------------------------------------------------------
-" Get good
-"-------------------------------------------------------------------------------
-" Turn off the arrow keys to make you better at hjkl
-nnoremap <up> <nop>
-nnoremap <down> <nop>
-nnoremap <left> <nop>
-nnoremap <right> <nop>
+" Show tabs and trailing whitespaces
+"set listchars=trail:·,tab:»·
+"set list
+
+" Don't let Vim insert new line breaks
+set textwidth=0
+
+set wildmenu
+set wildmode=longest:full,full
+
+" Setting the update time to a lower value than the default (4 seconds) will
+" make the gitgutter plugin more interactive
+set updatetime=100
+
+" Colors.
+" These need to be installed from the vim-colorschemes plugin
+" color molokai
+set termguicolors
+set background=dark
+" Ayu has an extra option
+"let ayucolor="dark"
+colorscheme gruvbox
+
+" Team spaces
+set expandtab      " Insert spaces when I hit the tab key
+set tabstop=4      " Insert 4 spaces
+set shiftwidth=0   " Indent to tabstop
+
+" Golang prefers tabs
+autocmd FileType go setlocal noexpandtab
+
+" The 80 column character limit is kind of outdated, but it's good to aim for.
+" The current Rust style guide recommends 100.
+set colorcolumn=80
+" Note that Vim lets you set two color columns:
+"set colorcolumn=80,100
+
+
+" Airline configuration
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#formatter = 'unique_tail'
+let g:airline_theme = 'badwolf'
+
+" -----------------------------------------------------------------------------
+" Arrow key remapping
+" -----------------------------------------------------------------------------
+
+" Turn off arrow keys. This makes you much better at Vim hjkl movement.
+" General modes non-recursive map.
+noremap <up> <nop>
+noremap <down> <nop>
+noremap <left> <nop>
+noremap <right> <nop>
+" Insert mode non-recursive map
 inoremap <up> <nop>
 inoremap <down> <nop>
 inoremap <left> <nop>
 inoremap <right> <nop>
 
-"-------------------------------------------------------------------------------
+" One alternative is to use the arrow keys to move between window splits.
+" This is good for when you are using a full size keyboard with arrow keys
+" and still want to put them to good use.
+noremap <up> <C-w>k
+noremap <down> <C-w>j
+noremap <left> <C-w>h
+noremap <right> <C-w>l
+
+" -----------------------------------------------------------------------------
+" NERDTree settings and mappings
+" -----------------------------------------------------------------------------
+nnoremap <leader>n :NERDTreeToggle<CR>
+let g:NERDTreeDirArrowExpandable = '▸'
+let g:NERDTreeDirArrowCollapsible = '▾'
+
+
+" -----------------------------------------------------------------------------
 " Functions
-"-------------------------------------------------------------------------------
-" Remove trailing whitespace
+" -----------------------------------------------------------------------------
+
+" Remove trailing whitespaces
 function! StripTrailingWhitespaces()
     let l = line(".")
     let c = col(".")
     %s/\s\+$//e
     call cursor(l, c)
 endfun
-command! StripTrailingWhitespaces call StripTrailingWhitespaces()
 
-" Automatically clean up trailing whitespace in source code. Note that if you're dealing
-" with 'other people's code' you might make them angry when you commit a ton of changes
-" due to this.
-" See also the shortcut for showing trailing whitespace.
-" autocmd FileType c,cpp,java,php,ruby,python,javascript autocmd BufWritePre <buffer> :call StripTrailingWhitespaces()
+" -----------------------------------------------------------------------------
+" Commands, remaps, etc.
+" -----------------------------------------------------------------------------
 
-"-------------------------------------------------------------------------------
-" Normal mode shortcuts
-"-------------------------------------------------------------------------------
-" Make it easier to resize window panes
-nnoremap <silent> + :resize +1<CR>
-nnoremap <silent> - :resize -1<CR>
-nnoremap <silent> { :vertical resize -1<CR>
-nnoremap <silent> } :vertical resize +1<CR>
+" Reloads the current init.vim file
+command! InitReload source $MYVIMRC
 
-" The default H, L, and M (capitals) jump the cursor around the screen and that's not
-" very  useful. K opens a man page by default but I rarely want to read a man page in vim.
-" Remap these to moving between window splits.
-nnoremap <silent> H <C-w>h
-nnoremap <silent> J <C-w>j
-nnoremap <silent> L <C-w>l
-nnoremap <silent> K <C-w>k
+command! InitOpen edit $MYVIMRC
 
-" Switch between Vim buffers with  with Ctrl-h and Ctrl-l
-nnoremap <C-h> :bprevious<CR>
-nnoremap <C-l> :bnext<CR>
+" Shortcut for call StripTrailingWhitespaces()
+command Trim call StripTrailingWhitespaces()
 
-" Use page up and page down to switch tabs.
-nnoremap <PageUp> :tabnext<CR>
-nnoremap <PageDown> :tabprevious<CR>
+" Quickly toggle between tabs and spaces
+nnoremap <leader>T :set noexpandtab<CR>
+nnoremap <leader>t :set expandtab<CR
 
-" A shortcut for cleaning up JSON files
-nnoremap <leader>j :%!python -m json.tool<CR>
+" Remap page-up and page-down to switch between tabs
+nnoremap <PageUp> :tabprevious<CR>
+nnoremap <PageDown> :tabnext<CR>
 
-" NERDTree toggle
-nnoremap <silent> <leader>n :NERDTreeToggle<CR>
+nnoremap <Tab> :bnext<CR>
 
-" Capital L to do a syntastic check e.g. 'Lint'
-" Lower case l to turn off syntastic
-nnoremap <leader>L :SyntasticCheck<CR> :Errors<CR>
-nnoremap <Leader>l :SyntasticReset<CR>
-
-" Show trailing whitespaces
-highlight ExtraWhitespace ctermbg=red guibg=red
-map <leader>w :match ExtraWhitespace /\s\+$/<CR>
-
-" Quickly switch between tabs and spaces
-map <leader>T :set noexpandtab<CR>
-map <leader>t :set expandtab<CR>
+" -----------------------------------------------------------------------------
+"  LSP
+"  The NeoVim specific stuff for the LSP is in Lua.
+" -----------------------------------------------------------------------------
+lua require'lspconfig'.rust_analyzer.setup({})
+lua require'lspconfig'.clangd.setup({})
 
